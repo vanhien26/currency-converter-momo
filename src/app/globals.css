@@ -1,54 +1,72 @@
+/* 1. Luôn đặt @import ở dòng đầu tiên */
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+/* 2. Sau đó mới đến các chỉ thị Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
-
 :root {
+  /* Font Config */
   --font-inter: 'Be Vietnam Pro', system-ui, sans-serif;
-  --font-display: 'Be Vietnam Pro', system-ui, sans-serif;
-  
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  /* Dùng Space Grotesk cho số liệu/tiêu đề sẽ rất hiện đại */
+
+  /* MoMo Brand Colors */
   --momo-primary: #A50064;
   --momo-primary-dark: #8B0055;
   --momo-accent: #FF4081;
   --momo-surface: #FFF5F9;
+  --momo-gray: #727272;
 }
 
-* {
-  box-sizing: border-box;
+@layer base {
+  * {
+    @apply border-border box-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    font-family: var(--font-inter);
+    @apply antialiased bg-[#F5F7F9] text-slate-900;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
+/* Custom Scrollbar - Tối ưu cho trình duyệt Web */
+@layer components {
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #D1D5DB;
+    border-radius: 20px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #A50064;
+  }
 }
 
-body {
-  font-family: var(--font-inter);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
-}
-
-/* Selection */
+/* Selection & Focus */
 ::selection {
   background-color: rgba(165, 0, 100, 0.15);
   color: #A50064;
 }
 
-/* Focus visible */
 :focus-visible {
   outline: 2px solid var(--momo-primary);
   outline-offset: 2px;
-  border-radius: 4px;
+}
+
+/* Hiệu ứng chuyển cảnh mượt mà cho các Card tiền tệ */
+.currency-card-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
