@@ -1,41 +1,39 @@
-/* 1. Luôn đặt @import ở dòng đầu tiên */
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
-/* 2. Sau đó mới đến các chỉ thị Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Font Config */
   --font-inter: 'Be Vietnam Pro', system-ui, sans-serif;
   --font-display: 'Space Grotesk', system-ui, sans-serif;
-  /* Dùng Space Grotesk cho số liệu/tiêu đề sẽ rất hiện đại */
 
-  /* MoMo Brand Colors */
   --momo-primary: #A50064;
   --momo-primary-dark: #8B0055;
   --momo-accent: #FF4081;
   --momo-surface: #FFF5F9;
-  --momo-gray: #727272;
 }
 
 @layer base {
   * {
-    @apply border-border box-border;
+    /* Đã loại bỏ border-border bị lỗi */
+    box-sizing: border-box;
   }
 
   html {
-    @apply scroll-smooth;
+    scroll-behavior: smooth;
   }
 
   body {
     font-family: var(--font-inter);
-    @apply antialiased bg-[#F5F7F9] text-slate-900;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #F5F7F9;
+    color: #0f172a;
   }
 }
 
-/* Custom Scrollbar - Tối ưu cho trình duyệt Web */
+/* Custom Scrollbar */
 @layer components {
   ::-webkit-scrollbar {
     width: 6px;
@@ -64,9 +62,4 @@
 :focus-visible {
   outline: 2px solid var(--momo-primary);
   outline-offset: 2px;
-}
-
-/* Hiệu ứng chuyển cảnh mượt mà cho các Card tiền tệ */
-.currency-card-transition {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
