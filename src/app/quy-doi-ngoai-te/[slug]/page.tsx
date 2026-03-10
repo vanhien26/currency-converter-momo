@@ -39,7 +39,7 @@ export async function generateStaticParams() {
 }
 
 interface PageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 type ParsedSlug =
@@ -67,7 +67,8 @@ function parseSlug(slug: string): ParsedSlug | null {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const result = parseSlug(params.slug);
+  const { slug } = await params;
+  const result = parseSlug(slug);
   if (!result) return {};
 
   if (result.type === 'pair') {
@@ -82,8 +83,9 @@ export async function generateMetadata({
 // PAGE COMPONENT
 // =============================================================================
 
-export default function CurrencyPage({ params }: PageProps) {
-  const result = parseSlug(params.slug);
+export default async function CurrencyPage({ params }: PageProps) {
+  const { slug } = await params;
+  const result = parseSlug(slug);
   if (!result) notFound();
 
   // Common data

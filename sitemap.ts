@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { currencies, getAllCurrencyPairs } from '@/app/_data/currencies';
+import { currencies, getAllCurrencyPairs } from '@/data/currencies';
 
 const SITE_URL = 'https://momo.vn';
 
