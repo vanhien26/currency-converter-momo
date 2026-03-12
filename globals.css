@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: 'Be Vietnam Pro', system-ui, sans-serif;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+
+  --momo-primary: #A50064;
+  --momo-primary-dark: #8B0055;
+  --momo-accent: #FF4081;
+  --momo-surface: #FFF5F9;
+}
+
+@layer base {
+  * {
+    /* Đã loại bỏ border-border bị lỗi */
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-inter);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #F5F7F9;
+    color: #0f172a;
+  }
+}
+
+/* Custom Scrollbar */
+@layer components {
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #D1D5DB;
+    border-radius: 20px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #A50064;
+  }
+}
+
+/* Selection & Focus */
+::selection {
+  background-color: rgba(165, 0, 100, 0.15);
+  color: #A50064;
+}
+
+:focus-visible {
+  outline: 2px solid var(--momo-primary);
+  outline-offset: 2px;
+}
