@@ -1,163 +1,173 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
-import { currencies, getExchangeRate, type Currency } from '@/data/currencies';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { currencies, getCurrencyByCode, getExchangeRate, type Currency } from '@/data/currencies';
 
 interface Props {
   defaultFrom?: string;
   defaultTo?: string;
 }
 
-export default function CurrencyConverter({ defaultFrom = 'USD', defaultTo = 'VND' }: Props) {
+function formatNumber(num: number): string {
+  return num.toLocaleString('vi-VN', { 
+    maximumFractionDigits: num < 1 ? 6 : 2,
+    minimumFractionDigits: num < 1 ? 4 : 2 
+  });
+}
+
+export default function CurrencyConverter({ 
+  defaultFrom = 'USD', 
+  defaultTo = 'VND' 
+}: Props) {
   const [fromCode, setFromCode] = useState(defaultFrom);
   const [toCode, setToCode] = useState(defaultTo);
   const [amount, setAmount] = useState('1');
   const [direction, setDirection] = useState<'from' | 'to'>('from');
 
+  const fromCurrency = useMemo(() => getCurrencyByCode(fromCode)!, [fromCode]);
+  const toCurrency = useMemo(() => getCurrencyByCode(toCode)!, [toCode]);
+  
   const rate = useMemo(() => getExchangeRate(fromCode, toCode), [fromCode, toCode]);
   const reverseRate = useMemo(() => getExchangeRate(toCode, fromCode), [fromCode, toCode]);
-
+  
   const numericAmount = parseFloat(amount) || 0;
-  const convertedAmount = direction === 'from' ? numericAmount * rate : numericAmount * reverseRate;
+  const convertedAmount = direction === 'from' ? numericAmount * rate : numericAmount / rate;
 
-  const fromCurrency = currencies.find((c) => c.code === fromCode)!;
-  const toCurrency = currencies.find((c) => c.code === toCode)!;
+  // Input handlers
+  const handleAmountChange = useCallback((value: string, dir: 'from' | 'to') => {
+    setAmount(value.replace(/[^0-9.]/g, ''));
+    setDirection(dir);
+  }, []);
 
   const handleSwap = useCallback(() => {
+    const tempCode = fromCode;
     setFromCode(toCode);
-    setToCode(fromCode);
+    setToCode(tempCode);
+    setDirection('from');
   }, [fromCode, toCode]);
 
-  const formatNumber = (num: number): string => {
-    if (num >= 1000) {
-      return num.toLocaleString('vi-VN', { maximumFractionDigits: 2 });
-    }
-    if (num >= 1) {
-      return num.toLocaleString('vi-VN', { maximumFractionDigits: 4 });
-    }
-    return num.toLocaleString('vi-VN', { maximumFractionDigits: 6 });
-  };
+  const quickAmounts = [1, 10, 100, 1000, 5000, 10000];
 
   return (
-    <div className="w-full">
-      {/* Converter Card */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xl shadow-gray-100/50 sm:p-8">
-        {/* From Input */}
-        <div className="mb-2">
-          <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-gray-500">
-            Bạn có
+    <div className="w-full max-w-md mx-auto space-y-4">
+      {/* Dual Input - Wise Style */}
+      <div className="space-y-4">
+        {/* FROM */}
+        <div>
+          <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500">
+            Bạn gửi
           </label>
-          <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50/50 p-3 transition-all focus-within:border-[#A50064] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#A50064]/10">
+          <div className="flex rounded-xl border-2 border-gray-200 p-3 bg-gradient-to-r from-white to-gray-50">
             <select
               value={fromCode}
               onChange={(e) => setFromCode(e.target.value)}
-              className="min-w-[140px] rounded-lg border-0 bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A50064]/20"
-              aria-label="Chọn tiền tệ nguồn"
+              className="w-28 rounded-lg border-0 bg-transparent px-2 py-2 text-lg font-bold text-gray-900 outline-none"
             >
               {currencies.map((c) => (
                 <option key={c.code} value={c.code}>
-                  {c.flag} {c.code} – {c.name}
+                  {c.flag} {c.code}
                 </option>
               ))}
             </select>
             <input
               type="text"
               inputMode="decimal"
-              value={amount}
-              onChange={(e) => {
-                setAmount(e.target.value);
-                setDirection('from');
-              }}
+              value={direction === 'from' ? amount : formatNumber(convertedAmount)}
+              onChange={(e) => handleAmountChange(e.target.value, 'from')}
               placeholder="0"
-              className="w-full bg-transparent text-right text-2xl font-bold text-gray-900 outline-none placeholder:text-gray-300 sm:text-3xl"
-              aria-label={`Số tiền ${fromCode}`}
+              className="ml-3 flex-1 text-right text-3xl font-bold text-gray-900 bg-transparent outline-none placeholder:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
           </div>
         </div>
 
-        {/* Swap Button + Rate Display */}
-        <div className="relative my-4 flex items-center justify-center">
-          <div className="absolute inset-x-0 top-1/2 h-px bg-gray-200" />
+        {/* SWAP + RATE */}
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-x-0 top-1/2 h-px bg-gray-200" aria-hidden="true" />
           <button
+            type="button"
             onClick={handleSwap}
-            className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 border-gray-200 bg-white text-gray-500 shadow-sm transition-all hover:border-[#A50064] hover:text-[#A50064] hover:shadow-md active:scale-95"
-            aria-label="Đổi chiều quy đổi"
+            className="relative z-10 grid h-11 w-11 place-items-center rounded-full border-2 border-gray-200 bg-white shadow-sm transition-all hover:border-pink-500 hover:text-pink-600 hover:shadow-md active:scale-95"
+            aria-label="Hoán đổi tiền tệ"
           >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
             </svg>
           </button>
-          <div className="absolute right-0 rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
-            1 {fromCode} = {formatNumber(rate)} {toCode}
-          </div>
+          {rate > 0 && (
+            <div className="absolute right-0 rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700">
+              1 {fromCode} = {formatNumber(rate)} {toCode}
+            </div>
+          )}
         </div>
 
-        {/* To Output */}
+        {/* TO */}
         <div>
-          <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-gray-500">
-            Bạn nhận được
+          <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500">
+            Bạn nhận
           </label>
-          <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gradient-to-r from-[#FFF5F9] to-white p-3">
+          <div className="flex rounded-xl border-2 border-gray-200 p-3 bg-gradient-to-r from-pink-50 to-white">
             <select
               value={toCode}
               onChange={(e) => setToCode(e.target.value)}
-              className="min-w-[140px] rounded-lg border-0 bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A50064]/20"
-              aria-label="Chọn tiền tệ đích"
+              className="w-28 rounded-lg border-0 bg-transparent px-2 py-2 text-lg font-bold text-gray-900 outline-none"
             >
               {currencies.map((c) => (
                 <option key={c.code} value={c.code}>
-                  {c.flag} {c.code} – {c.name}
+                  {c.flag} {c.code}
                 </option>
               ))}
             </select>
-            <div className="w-full text-right text-2xl font-bold text-[#A50064] sm:text-3xl">
-              {formatNumber(direction === 'from' ? numericAmount * rate : numericAmount)}
+            <div className="ml-3 flex flex-1 items-end justify-end text-3xl font-bold text-pink-600">
+              {direction === 'to' ? amount : formatNumber(convertedAmount)}
             </div>
           </div>
         </div>
-
-        {/* Rate Details */}
-        <div className="mt-6 flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
-          <div className="text-sm text-gray-600">
-            <span className="font-semibold text-gray-900">1 {fromCode}</span> = {formatNumber(rate)} {toCode}
-          </div>
-          <div className="text-sm text-gray-600">
-            <span className="font-semibold text-gray-900">1 {toCode}</span> = {formatNumber(reverseRate)} {fromCode}
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div className="mt-6">
-          <a
-            href="#"
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#A50064] to-[#D81B60] px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-pink-200/40 transition-all hover:shadow-xl hover:shadow-pink-200/50 active:scale-[0.98]"
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
-            Chuyển tiền qua MoMo
-          </a>
-          <p className="mt-2 text-center text-xs text-gray-400">
-            Phí chuyển tiền quốc tế từ 0đ. Tỷ giá cạnh tranh, cập nhật liên tục.
-          </p>
-        </div>
       </div>
 
-      {/* Quick Amount Buttons */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        {[1, 10, 100, 1000, 5000, 10000].map((val) => (
+      {/* Rate Info */}
+      {rate > 0 && (
+        <div className="grid grid-cols-2 gap-4 rounded-xl bg-gradient-to-r from-gray-50 to-pink-50 p-4 text-xs">
+          <div>
+            <div className="text-gray-500 uppercase tracking-wider font-medium">Tỷ giá</div>
+            <div className="font-bold text-pink-600 mt-1">1 {fromCode} = {formatNumber(rate)} {toCode}</div>
+          </div>
+          <div className="text-right">
+            <div className="text-gray-500 uppercase tracking-wider font-medium">Ngược lại</div>
+            <div className="font-bold text-pink-600 mt-1">1 {toCode} = {formatNumber(reverseRate)} {fromCode}</div>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Amounts */}
+      <div className="grid grid-cols-3 gap-2">
+        {quickAmounts.map((val) => (
           <button
             key={val}
+            type="button"
             onClick={() => {
               setAmount(val.toString());
               setDirection('from');
             }}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-all hover:border-[#A50064] hover:text-[#A50064]"
+            className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700 transition-all hover:border-pink-400 hover:bg-pink-50 hover:text-pink-600 active:scale-95"
           >
-            {val.toLocaleString()} {fromCode}
+            {val.toLocaleString('vi-VN')} {fromCode}
           </button>
         ))}
       </div>
+
+      {/* CTA */}
+      <a
+        href="#"
+        className="block w-full rounded-2xl bg-gradient-to-r from-pink-600 to-pink-700 px-6 py-4 text-center text-sm font-semibold text-white shadow-xl hover:shadow-2xl hover:from-pink-700 hover:to-pink-800 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 active:scale-[0.98] transition-all"
+      >
+        <span>Chuyển tiền quốc tế qua MoMo</span>
+        <span className="ml-1 text-pink-200">→</span>
+      </a>
+
+      <p className="text-center text-xs text-gray-500">
+        Tỷ giá cập nhật realtime • Phí thấp nhất thị trường
+      </p>
     </div>
   );
 }
+
