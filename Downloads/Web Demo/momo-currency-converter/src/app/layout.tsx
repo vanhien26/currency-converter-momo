@@ -31,23 +31,21 @@ export default function RootLayout({
           <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
             <a href="/" className="flex items-center gap-2" aria-label="MoMo Trang chủ">
               {/* MoMo Logo */}
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#A50064] to-[#D81B60]">
-                <span className="text-lg font-bold text-white">M</span>
-              </div>
+<img src="https://momo.vn/favicon.ico" alt="MoMo" className="h-9 w-9" />
               <span className="text-lg font-bold text-gray-900">
                 Mo<span className="text-[#A50064]">Mo</span>
               </span>
             </a>
 
             <nav aria-label="Main navigation" className="hidden items-center gap-6 md:flex">
-              <a href="/quy-doi-ngoai-te/" className="text-sm font-medium text-[#A50064] hover:text-[#8B0055]">
-                Quy đổi ngoại tệ
+              <a href="/ty-gia/blog" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+                Blog
               </a>
-              <a href="/chuyen-tien-quoc-te/" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-                Chuyển tiền quốc tế
+              <a href="/faq" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+                FAQ
               </a>
-              <a href="/tai-khoan-da-tien-te/" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-                Tài khoản đa tiền tệ
+              <a href="/ty-gia/" className="text-sm font-medium text-[#A50064] hover:text-[#8B0055]">
+                Quy đổi
               </a>
             </nav>
 
@@ -72,11 +70,11 @@ export default function RootLayout({
                 </h3>
                 <ul className="space-y-2">
                   {[
-                    ['USD sang VND', '/quy-doi-ngoai-te/chuyen-doi-usd-sang-vnd/'],
-                    ['EUR sang VND', '/quy-doi-ngoai-te/chuyen-doi-eur-sang-vnd/'],
-                    ['JPY sang VND', '/quy-doi-ngoai-te/chuyen-doi-jpy-sang-vnd/'],
-                    ['KRW sang VND', '/quy-doi-ngoai-te/chuyen-doi-krw-sang-vnd/'],
-                    ['GBP sang VND', '/quy-doi-ngoai-te/chuyen-doi-gbp-sang-vnd/'],
+                    ['USD sang VND', '/ty-gia/usd-sang-vnd/'],
+                    ['EUR sang VND', '/ty-gia/eur-sang-vnd/'],
+                    ['JPY sang VND', '/ty-gia/jpy-sang-vnd/'],
+                    ['KRW sang VND', '/ty-gia/krw-sang-vnd/'],
+                    ['GBP sang VND', '/ty-gia/gbp-sang-vnd/'],
                   ].map(([label, href]) => (
                     <li key={href}>
                       <a href={href} className="text-sm text-gray-600 hover:text-[#A50064]">
@@ -92,11 +90,11 @@ export default function RootLayout({
                 </h3>
                 <ul className="space-y-2">
                   {[
-                    ['Đô la Mỹ (USD)', '/quy-doi-ngoai-te/usd-do-la-my/'],
-                    ['Euro (EUR)', '/quy-doi-ngoai-te/eur-euro/'],
-                    ['Yên Nhật (JPY)', '/quy-doi-ngoai-te/jpy-yen-nhat/'],
-                    ['Won Hàn Quốc (KRW)', '/quy-doi-ngoai-te/krw-won-han-quoc/'],
-                    ['Nhân dân tệ (CNY)', '/quy-doi-ngoai-te/cny-nhan-dan-te/'],
+                    ['Đô la Mỹ (USD)', '/ty-gia/usd-do-la-my/'],
+                    ['Euro (EUR)', '/ty-gia/eur-euro/'],
+                    ['Yên Nhật (JPY)', '/ty-gia/jpy-yen-nhat/'],
+                    ['Won Hàn Quốc (KRW)', '/ty-gia/krw-won-han-quoc/'],
+                    ['Nhân dân tệ (CNY)', '/ty-gia/cny-nhan-dan-te/'],
                   ].map(([label, href]) => (
                     <li key={href}>
                       <a href={href} className="text-sm text-gray-600 hover:text-[#A50064]">

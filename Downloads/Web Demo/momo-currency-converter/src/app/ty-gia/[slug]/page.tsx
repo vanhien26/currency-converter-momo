@@ -32,7 +32,7 @@ export async function generateStaticParams() {
   }));
 
   const pairParams = getAllCurrencyPairs().map((pair) => ({
-    slug: `chuyen-doi-${pair.from.code.toLowerCase()}-sang-${pair.to.code.toLowerCase()}`,
+    slug: `${pair.from.code.toLowerCase()}-sang-${pair.to.code.toLowerCase()}`,
   }));
 
   return [...currencyParams, ...pairParams];
@@ -47,9 +47,9 @@ type ParsedSlug =
   | { type: 'currency'; currency: Currency };
 
 function parseSlug(slug: string): ParsedSlug | null {
-  // Case 1: Pair slug "chuyen-doi-usd-sang-vnd"
-  if (slug.startsWith('chuyen-doi-') && slug.includes('-sang-')) {
-    const parts = slug.replace('chuyen-doi-', '').split('-sang-');
+  // Case 1: Pair slug "usd-sang-vnd"
+  if (slug.includes('-sang-')) {
+    const parts = slug.split('-sang-');
     if (parts.length === 2) {
       const from = getCurrencyByCode(parts[0].toUpperCase());
       const to = getCurrencyByCode(parts[1].toUpperCase());
@@ -271,7 +271,7 @@ export default async function CurrencyPage({ params }: PageProps) {
                     (target) => (
                       <a
                         key={target.code}
-                        href={`/quy-doi-ngoai-te/chuyen-doi-${currency.code.toLowerCase()}-sang-${target.code.toLowerCase()}/`}
+                        href={`/ty-gia/${currency.code.toLowerCase()}-sang-${target.code.toLowerCase()}/`}
                         className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition-all hover:border-[#A50064]/30 hover:text-[#A50064]"
                       >
                         {currency.code} → {target.code}
@@ -322,7 +322,7 @@ export default async function CurrencyPage({ params }: PageProps) {
               .map((c) => (
                 <a
                   key={c.code}
-                  href={`/quy-doi-ngoai-te/${c.slug}/`}
+                  href={`/ty-gia/${c.slug}/`}
                   className="flex items-center gap-3 rounded-lg border border-gray-200 px-4 py-3 transition-all hover:border-[#A50064]/30 hover:bg-[#FFF5F9]"
                 >
                   <span className="text-xl">{c.flag}</span>
