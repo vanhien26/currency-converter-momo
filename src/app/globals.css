@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --momo-pink: #d82d8b;
+  --momo-pink-dark: #b0246f;
+  --momo-pink-light: #f06ab0;
+  --momo-pink-bg: #fdf0f7;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+  }
+}
+
+@layer components {
+  .btn-momo {
+    @apply bg-[#d82d8b] hover:bg-[#b0246f] text-white font-semibold px-6 py-3 rounded-xl transition-colors duration-200 cursor-pointer;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-gray-100 p-6;
+  }
+
+  .input-momo {
+    @apply border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#d82d8b] focus:border-transparent text-gray-900 bg-white;
+  }
+
+  .select-momo {
+    @apply border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#d82d8b] focus:border-transparent bg-white text-gray-900 cursor-pointer;
+  }
+
+  .badge-momo {
+    @apply bg-[#fdf0f7] text-[#d82d8b] text-xs font-medium px-2.5 py-1 rounded-full;
+  }
+}
+
+/* Hiệu ứng hover cho các card */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(216, 45, 139, 0.12);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #d82d8b40;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d82d8b;
+}
